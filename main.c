@@ -31,89 +31,14 @@
  */
 
 /*
- *  ======== main_freertos.c ========
+ * main.c
+ *
+ *  Created on: Dec 5, 2020
+ *      Author: Aksel Torgerson
+ *      Author: Matthew Kesler
  */
-#include "msp.h"
-#include "msp432p401r.h"
-#include <stdint.h>
-#include <stdio.h>
 
-/* RTOS header files */
-#include <FreeRTOS.h>
-#include <task.h>
-
-TaskHandle_t Task_Blink_LED1_Handle = NULL;
-TaskHandle_t Task_Blink_RGB_BLUE_Handle = NULL;
-
-/* ****************************************************************************
- * This Function initializes the hardware required to blink LED1 on the
- * MSP432 Launchpad
- * ***************************************************************************/
-void blink_led1_hw_init(void)
-{
-    // set direction as an output
-    P1->DIR |= BIT0;
-
-    // Turn off LED
-    P1->OUT &= ~BIT0;
-}
-
-/* ****************************************************************************
- * This Function initializes the hardware required to blink LED1 on the
- * MSP432 Launchpad
- * ***************************************************************************/
-void blink_rgb_blue_init(void)
-{
-    // set direction as an output
-    P2->DIR |= BIT2;
-
-    // Turn off LED
-    P2->OUT &= ~BIT2;
-}
-
-/******************************************************************************
-* Tasked used to blink LED1 on MSP432 Launchpad
-******************************************************************************/
-void Task_Blink_LED1(void *pvParameters)
-{
-    int i;
-    while(1)
-    {
-        // turn on the LED
-        P1->OUT |= BIT0;
-
-        // Delay
-        for(i=0; i < 1000000; i++){};
-
-        // turn off the LED
-        P1->OUT &= ~BIT0;
-
-        // Delay
-        for(i=0; i < 1000000; i++){};
-    }
-}
-
-/******************************************************************************
-* Tasked used to blink LED1 on MSP432 Launchpad
-******************************************************************************/
-void Task_Blink_RGB_Blue(void *pvParameters)
-{
-    int i;
-    while(1)
-    {
-        // turn on the LED
-        P2->OUT |= BIT2;
-
-        // Delay
-        for(i=0; i < 1000000; i++){};
-
-        // turn off the LED
-        P2->OUT &= ~BIT2;
-
-        // Delay
-        for(i=0; i < 1000000; i++){};
-    }
-}
+#include "main.h"
 
 /*
  *  ======== main ========
@@ -122,29 +47,60 @@ int main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
 
-    blink_led1_hw_init();
-    blink_rgb_blue_init();
+    /* Initialization before scheduler */
+    bucky_init();
+
+    __enable_irq();
+
+    /* Task initialization */
+
+    // TODO change priorities of tasks below
+    // TODO will need multiple more taks for bottom halves and other necessary functions
 
     xTaskCreate
-    (
-        Task_Blink_LED1,
-        "LED1 Blink Task",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        1,
-        &Task_Blink_LED1_Handle
-    );
+         (   Task_Accelerometer,
+             "Task_Accelerometer",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_Accelerometer_Handle
+         );
 
     xTaskCreate
-    (
-        Task_Blink_RGB_Blue,
-        "LED RGB Blue Blink Task",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        1,
-        &Task_Blink_RGB_BLUE_Handle
-    );
+         (   Task_Bucky,
+             "Task_Bucky",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_Bucky_Handle
+         );
 
+    xTaskCreate
+         (   Task_Button,
+             "Task_Button",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_Button_Handle
+         );
+
+    xTaskCreate
+         (   Task_Buzzer,
+             "Task_Buzzer",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_Buzzer_Handle
+         );
+
+    xTaskCreate
+         (   Task_LightSensor,
+             "Task_LightSensor",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_LightSensor_Handle
+         );
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();
