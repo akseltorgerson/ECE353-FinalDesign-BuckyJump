@@ -14,6 +14,7 @@
 #include "msp432p401r.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
@@ -32,6 +33,7 @@
 /* Other Includes */
 #include <lcd.h>
 #include <bitmaps.h>
+#include <ece353.h>
 
 
 #endif /* MAIN_H_ */

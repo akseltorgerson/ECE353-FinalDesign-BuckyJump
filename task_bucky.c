@@ -34,7 +34,7 @@ void Task_Bucky(void *pvParameters) {
 
     uint8_t buckyX = 64;
     uint8_t buckyY = LCD_HORIZONTAL_MAX - (buckyHeightPixels / 2);
-    uint8_t delayMS = 25;
+    uint8_t delayMS = BASE_DELAY;
 
     BUCKY_MSG_t bucky_msg;
     BaseType_t status;
@@ -51,6 +51,34 @@ void Task_Bucky(void *pvParameters) {
     );
 
     while(1) {
+
+        status = xQueueReceive(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+
+        if (bucky_msg.cmd == BUCKY_LEFT) {
+
+            // if (buckyX - 1 <= (buckyWidthPixels / 2)) break;
+            buckyX--;
+
+        } else if (bucky_msg.cmd == BUCKY_RIGHT) {
+
+            // if (buckyX + 1 >= (LCD_VERTICAL_MAX - (buckyWidthPixels / 2))) break;
+            buckyX++;
+
+        }
+
+        delayMS = bucky_msg.speed;
+
+        // draw the image once per cycle
+        lcd_draw_image(
+                buckyX,
+                buckyY,
+                buckyWidthPixels,
+                buckyHeightPixels,
+                buckyRight_bitmap,
+                LCD_COLOR_RED,
+                LCD_COLOR_BLACK
+        );
+
 
         // necessary task delay, default is 25ms
         vTaskDelay(pdMS_TO_TICKS(delayMS));

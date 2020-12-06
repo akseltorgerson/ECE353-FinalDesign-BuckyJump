@@ -58,6 +58,17 @@ int main(void)
     // TODO change priorities of tasks below
     // TODO will need multiple more tasks for bottom halves and other necessary functions
 
+    // TODO Fix side hit boxes
+    // TODO Add button tasks, make jump movement
+    // TODO Add random element that generates platforms
+    // TODO Get bitmap for platforms and coins.
+    // TODO Start working on jumping on stationary platforms
+    // TODO Make platforms fall
+    // TODO Make Bucky be able to jump from them
+    // TODO TODO make screen scrool up, in doodle jump fashion (if possible)
+    // TODO keep track of score
+    // TODO when you hit the bottom of the screen you die and your score is shown
+
     xTaskCreate
         (   Task_Accelerometer_Timer,
             "Task_Accelerometer",
@@ -72,7 +83,7 @@ int main(void)
              "Task_Accelerometer",
              configMINIMAL_STACK_SIZE,
              NULL,
-             1,
+             3,
              &Task_Accelerometer_Handle
          );
 

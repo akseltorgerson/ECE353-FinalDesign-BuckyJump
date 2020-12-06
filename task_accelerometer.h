@@ -11,6 +11,11 @@
 
 #include "main.h"
 
+/* "flat" voltage reading */
+#define VOLT_1P65   8192      // 1.65 / (3.3 / 16383)
+
+#define BUCKY_SPEED_DAMPENING   .01
+
 extern TaskHandle_t Task_Accelerometer_Handle;
 extern TaskHandle_t Task_Accelerometer_Timer_Handle;
 

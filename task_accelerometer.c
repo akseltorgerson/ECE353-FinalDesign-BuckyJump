@@ -42,6 +42,10 @@ void accel_init(void) {
 
     // Turn ADC on
     ADC14->CTL0 |= ADC14_CTL0_ON;
+
+    // LEDS for fun
+    // ece353_MKII_RGB_IO_Init(false);
+
 }
 
 /******************************************************************************
@@ -73,8 +77,33 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
         // wait until we get a task notification from the ADC14 ISR
         ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        // TODO figure out how to read the data from the accelerometer
-        // TODO send a message the the bucky queue to be processed
+
+        if (ACCELEROMETER_X_DIR > VOLT_1P65) {        /* RIGHT TILT */
+
+            // ece353_MKII_RGB_LED(true, false, false);        // red
+
+            bucky_msg.cmd = BUCKY_RIGHT;
+            bucky_msg.speed = BASE_DELAY - (abs(ACCELEROMETER_X_DIR - VOLT_1P65) * BUCKY_SPEED_DAMPENING);
+            status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+
+        } else if (ACCELEROMETER_X_DIR < VOLT_1P65) {  /* LEFT TILT */
+
+            // ece353_MKII_RGB_LED(false, false, true);        // green
+
+            bucky_msg.cmd = BUCKY_LEFT;
+            bucky_msg.speed = BASE_DELAY - (abs(ACCELEROMETER_X_DIR - VOLT_1P65) * BUCKY_SPEED_DAMPENING);
+            status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+
+
+        } else {                                            /* CENTER */
+
+            // ece353_MKII_RGB_LED(false, true, false);        // blue
+
+            // bucky_msg.cmd = BUCKY_CENTER;
+            // bucky_msg.value = 1;
+            // status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+
+        }
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }
@@ -85,12 +114,12 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
 ******************************************************************************/
 void ADC14_IRQHandler(void) {
 
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    BaseType_t xHigherPriorityTaskWoken = pdTRUE;
 
     // read the value and clear the interrupt
     ACCELEROMETER_X_DIR = ADC14->MEM[0];
 
-    // send a task notifiation to Task_Accelerometer_Bottom_Half
+    // send a task notification to Task_Accelerometer_Bottom_Half
     vTaskNotifyGiveFromISR(
             Task_Accelerometer_Handle,
             &xHigherPriorityTaskWoken
