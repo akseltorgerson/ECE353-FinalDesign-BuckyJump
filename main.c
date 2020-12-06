@@ -49,16 +49,26 @@ int main(void)
 
     /* Initialization before scheduler */
     bucky_init();
+    accel_init();
 
     __enable_irq();
 
     /* Task initialization */
 
     // TODO change priorities of tasks below
-    // TODO will need multiple more taks for bottom halves and other necessary functions
+    // TODO will need multiple more tasks for bottom halves and other necessary functions
 
     xTaskCreate
-         (   Task_Accelerometer,
+        (   Task_Accelerometer_Timer,
+            "Task_Accelerometer",
+            configMINIMAL_STACK_SIZE,
+            NULL,
+            2,
+            &Task_Accelerometer_Timer_Handle
+        );
+
+    xTaskCreate
+         (   Task_Accelerometer_Bottom_Half,
              "Task_Accelerometer",
              configMINIMAL_STACK_SIZE,
              NULL,
