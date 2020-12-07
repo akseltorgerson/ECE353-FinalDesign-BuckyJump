@@ -18,6 +18,6 @@ volatile extern bool BUTTON2_PRESSED;
 
 void button_init(void);
 
-void Task_Button(void *pvParameters);
+void Task_Button_Bottom_Half(void *pvParameters);
 
 #endif /* TASK_BUTTON_H_ */

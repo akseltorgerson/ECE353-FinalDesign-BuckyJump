@@ -24,7 +24,7 @@ void button_init() {
 }
 
 
-void Task_Button(void *pvParameters) {
+void Task_Button_Bottom_Half(void *pvParameters) {
 
     uint32_t ulEventToProcess;
     BUCKY_MSG_t bucky_msg;
@@ -35,15 +35,12 @@ void Task_Button(void *pvParameters) {
         // wait until we get a task notification from the T32_INT1 ISR
         ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        if (BUTTON2_PRESSED) {
+        // send a jump command to the queue
+        bucky_msg.cmd = BUCKY_JUMP;
+        bucky_msg.speed = 1;
+        status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-            BUTTON2_PRESSED = !BUTTON2_PRESSED;
-
-            bucky_msg.cmd = BUCKY_JUMP;
-            bucky_msg.speed = 1;
-            status = xQueueSendToBack(Queue_Jump, &bucky_msg, portMAX_DELAY);
-
-        }
+        BUTTON2_PRESSED = false;
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }
@@ -80,15 +77,6 @@ void T32_INT1_IRQHandler() {
 
         }
     }
-/*
-    // send a task notification to Task_Button_Bottom_Half
-    vTaskNotifyGiveFromISR(
-            Task_Button_Handle,
-            &xHigherPriorityTaskWoken
-    );
-
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-*/
 
     // DONT FORGET TO CLEAR THE INTERRUPT
     TIMER32_1->INTCLR = BIT0;

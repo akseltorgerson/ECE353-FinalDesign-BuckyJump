@@ -70,11 +70,6 @@ int main(void)
     // TODO keep track of score
     // TODO when you hit the bottom of the screen you die and your score is shown
 
-    Sem_LCD_Draw = xSemaphoreCreateBinary();
-
-    // Release print semaphore.
-    xSemaphoreGive(Sem_LCD_Draw);
-
     xTaskCreate
         (   Task_Accelerometer_Timer,
             "Task_Accelerometer",
@@ -103,16 +98,7 @@ int main(void)
          );
 
     xTaskCreate
-         (   Task_Jump,
-             "Task_Jump",
-             configMINIMAL_STACK_SIZE,
-             NULL,
-             1,
-             &Task_Jump_Handle
-         );
-
-    xTaskCreate
-         (   Task_Button,
+         (   Task_Button_Bottom_Half,
              "Task_Button",
              configMINIMAL_STACK_SIZE,
              NULL,

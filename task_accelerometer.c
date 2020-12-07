@@ -84,25 +84,7 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
             // ece353_MKII_RGB_LED(true, false, false);        // red
 
             bucky_msg.cmd = BUCKY_RIGHT;
-
-            if (ACCELEROMETER_X_DIR < VOLT_1P75) {
-
-                bucky_msg.speed = BASE_DELAY - 7;
-
-            } else if (ACCELEROMETER_X_DIR < VOLT_1P8) {
-
-                bucky_msg.speed = BASE_DELAY - 15;
-
-            } else if (ACCELEROMETER_X_DIR < VOLT_1P85) {
-
-                bucky_msg.speed = BASE_DELAY - 25;
-
-            } else {
-
-                bucky_msg.speed = BASE_DELAY - 29;
-
-            }
-
+            bucky_msg.speed = 1;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
         } else if (ACCELEROMETER_X_DIR < VOLT_1P6) {  /* LEFT TILT */
@@ -110,37 +92,19 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
             // ece353_MKII_RGB_LED(false, false, true);        // green
 
             bucky_msg.cmd = BUCKY_LEFT;
-
-            if (ACCELEROMETER_X_DIR > VOLT_1P55) {
-
-                bucky_msg.speed = BASE_DELAY - 7;
-
-            } else if (ACCELEROMETER_X_DIR > VOLT_1P5) {
-
-                bucky_msg.speed = BASE_DELAY - 15;
-
-            } else if (ACCELEROMETER_X_DIR > VOLT_1P45) {
-
-                bucky_msg.speed = BASE_DELAY - 25;
-
-            } else {
-
-                bucky_msg.speed = BASE_DELAY - 29;
-
-            }
-
+            bucky_msg.speed = 1;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
 
-        } //else {                                            /* CENTER */
+        } else {                                            /* CENTER */
 
             // ece353_MKII_RGB_LED(false, true, false);        // blue
 
-            //bucky_msg.cmd = BUCKY_CENTER;
-            //bucky_msg.speed = BASE_DELAY;
-            //status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+            bucky_msg.cmd = BUCKY_CENTER;
+            bucky_msg.speed = 1;
+            status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-       // }
+        }
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }

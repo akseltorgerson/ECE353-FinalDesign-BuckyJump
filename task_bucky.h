@@ -23,15 +23,11 @@ typedef enum {
 typedef struct {
     BUCKY_CMD_t cmd;
     uint8_t     speed;
-    bool        jump;
 } BUCKY_MSG_t;
 
 extern TaskHandle_t Task_Bucky_Handle;
 extern TaskHandle_t Task_Jump_Handle;
 extern QueueHandle_t Queue_Bucky;
-extern QueueHandle_t Queue_Jump;
-
-extern SemaphoreHandle_t Sem_LCD_Draw;
 
 /******************************************************************************
  * This function will initialize Queue_Bucky and initialize the LCD
