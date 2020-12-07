@@ -11,10 +11,19 @@
 
 #include "main.h"
 
-/* "flat" voltage reading */
-#define VOLT_1P65   8192      // 1.65 / (3.3 / 16383)
+/* tilt left threshold */
+#define VOLT_1P6    7943        // 1.60 / (3.3 / 16383)
+#define VOLT_1P55   7695        // 1.55
+#define VOLT_1P5    7447        // 1.50
+#define VOLT_1P45   7199        // 1.45
 
-#define BUCKY_SPEED_DAMPENING   .01
+/* tilt right threshold */
+#define VOLT_1P7    8440        // 1.7 / (3.3 / 16383)
+#define VOLT_1P75   8688        // 1.75
+#define VOLT_1P8    8936        // 1.8
+#define VOLT_1P85   9184        // 1.85
+
+#define BUCKY_SPEED_DAMPENING   .015
 
 extern TaskHandle_t Task_Accelerometer_Handle;
 extern TaskHandle_t Task_Accelerometer_Timer_Handle;

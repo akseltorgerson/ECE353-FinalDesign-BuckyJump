@@ -44,7 +44,7 @@ void accel_init(void) {
     ADC14->CTL0 |= ADC14_CTL0_ON;
 
     // LEDS for fun
-    // ece353_MKII_RGB_IO_Init(false);
+    ece353_MKII_RGB_IO_Init(false);
 
 }
 
@@ -57,6 +57,7 @@ void Task_Accelerometer_Timer(void *pvParameters) {
 
         // start an ADC conversion
         ADC14->CTL0 |= ADC14_CTL0_SC | ADC14_CTL0_ENC;
+
 
         // delay 5ms
         vTaskDelay(pdMS_TO_TICKS(5));
@@ -78,32 +79,68 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
         ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
 
-        if (ACCELEROMETER_X_DIR > VOLT_1P65) {        /* RIGHT TILT */
+        if (ACCELEROMETER_X_DIR > VOLT_1P7) {        /* RIGHT TILT */
 
             // ece353_MKII_RGB_LED(true, false, false);        // red
 
             bucky_msg.cmd = BUCKY_RIGHT;
-            bucky_msg.speed = BASE_DELAY - (abs(ACCELEROMETER_X_DIR - VOLT_1P65) * BUCKY_SPEED_DAMPENING);
+
+            if (ACCELEROMETER_X_DIR < VOLT_1P75) {
+
+                bucky_msg.speed = BASE_DELAY - 7;
+
+            } else if (ACCELEROMETER_X_DIR < VOLT_1P8) {
+
+                bucky_msg.speed = BASE_DELAY - 15;
+
+            } else if (ACCELEROMETER_X_DIR < VOLT_1P85) {
+
+                bucky_msg.speed = BASE_DELAY - 25;
+
+            } else {
+
+                bucky_msg.speed = BASE_DELAY - 29;
+
+            }
+
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-        } else if (ACCELEROMETER_X_DIR < VOLT_1P65) {  /* LEFT TILT */
+        } else if (ACCELEROMETER_X_DIR < VOLT_1P6) {  /* LEFT TILT */
 
             // ece353_MKII_RGB_LED(false, false, true);        // green
 
             bucky_msg.cmd = BUCKY_LEFT;
-            bucky_msg.speed = BASE_DELAY - (abs(ACCELEROMETER_X_DIR - VOLT_1P65) * BUCKY_SPEED_DAMPENING);
+
+            if (ACCELEROMETER_X_DIR > VOLT_1P55) {
+
+                bucky_msg.speed = BASE_DELAY - 7;
+
+            } else if (ACCELEROMETER_X_DIR > VOLT_1P5) {
+
+                bucky_msg.speed = BASE_DELAY - 15;
+
+            } else if (ACCELEROMETER_X_DIR > VOLT_1P45) {
+
+                bucky_msg.speed = BASE_DELAY - 25;
+
+            } else {
+
+                bucky_msg.speed = BASE_DELAY - 29;
+
+            }
+
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
 
-        } else {                                            /* CENTER */
+        } //else {                                            /* CENTER */
 
             // ece353_MKII_RGB_LED(false, true, false);        // blue
 
-            // bucky_msg.cmd = BUCKY_CENTER;
-            // bucky_msg.value = 1;
-            // status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
+            //bucky_msg.cmd = BUCKY_CENTER;
+            //bucky_msg.speed = BASE_DELAY;
+            //status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-        }
+       // }
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }

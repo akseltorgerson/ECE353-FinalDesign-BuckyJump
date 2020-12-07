@@ -615,9 +615,9 @@ void ece353_T32_1_Interrupt_Ms(uint16_t ms) {
     TIMER32_1->LOAD = ticks;
 
     // Enable the Timer32 interrupt in NVIC
-    __enable_irq();
+    // __enable_irq();
     NVIC_EnableIRQ(T32_INT1_IRQn);
-    NVIC_SetPriority(T32_INT1_IRQn, 0);
+    NVIC_SetPriority(T32_INT1_IRQn, 1);
 
     // Start Timer32 and enable interrupt
     TIMER32_1->CONTROL =    TIMER32_CONTROL_ENABLE |    // turn timer on
