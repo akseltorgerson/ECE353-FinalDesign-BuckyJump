@@ -40,6 +40,4 @@ void bucky_init(void);
  ******************************************************************************/
 void Task_Bucky(void *pvParameters);
 
-void Task_Jump(void *pvParameters);
-
 #endif /* TASK_BUCKY_H_ */

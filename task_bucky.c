@@ -29,12 +29,13 @@ void bucky_init(void) {
 
 /******************************************************************************
  * This task manages the movement of Bucky. The accelerometer moves Bucky left
- * or right, and the button S2 makes Bucky jump.
+ * or right, and the button S2 makes Bucky jump. The button S2 will send
+ * a jump command to the queue,
  ******************************************************************************/
 void Task_Bucky(void *pvParameters) {
 
     uint8_t buckyX = 64;
-    uint8_t buckyY = LCD_HORIZONTAL_MAX - (buckyHeightPixels / 2);
+    uint8_t buckyY = LCD_HORIZONTAL_MAX - (buckySmallHeightPixels / 2);
 
     uint8_t delayMS = BASE_DELAY;
 
@@ -49,9 +50,9 @@ void Task_Bucky(void *pvParameters) {
     lcd_draw_image(
             buckyX,
             buckyY,
-            buckyWidthPixels,
-            buckyHeightPixels,
-            buckyRight_bitmap,
+            buckySmallWidthPixels,
+            buckySmallHeightPixels,
+            buckyRightSmall_bitmap,
             LCD_COLOR_RED,
             LCD_COLOR_BLACK
     );
@@ -62,15 +63,17 @@ void Task_Bucky(void *pvParameters) {
 
         if (bucky_msg.cmd == BUCKY_LEFT) {
 
-            // if (buckyX - 1 <= (buckyWidthPixels / 2)) break;
+            if (buckyX - 1 >= (buckySmallWidthPixels / 2)) {
             buckyX--;
             delayMS = bucky_msg.speed;
+            }
 
         } else if (bucky_msg.cmd == BUCKY_RIGHT) {
 
-            // if (buckyX + 1 >= (LCD_VERTICAL_MAX - (buckyWidthPixels / 2))) break;
+            if (buckyX + 1 <= (LCD_HORIZONTAL_MAX - (buckySmallWidthPixels / 2))) {
             buckyX++;
             delayMS = bucky_msg.speed;
+            }
 
         } else if (bucky_msg.cmd == BUCKY_CENTER) {
 
@@ -105,9 +108,9 @@ void Task_Bucky(void *pvParameters) {
         lcd_draw_image(
                 buckyX,
                 buckyY,
-                buckyWidthPixels,
-                buckyHeightPixels,
-                buckyRight_bitmap,
+                buckySmallWidthPixels,
+                buckySmallHeightPixels,
+                buckyRightSmall_bitmap,
                 LCD_COLOR_RED,
                 LCD_COLOR_BLACK
         );

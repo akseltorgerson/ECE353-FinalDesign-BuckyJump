@@ -51,21 +51,23 @@ int main(void)
     bucky_init();
     accel_init();
     button_init();
+    platform_init();
 
     __enable_irq();
 
     /* Task initialization */
 
-    // TODO change priorities of tasks below
-    // TODO will need multiple more tasks for bottom halves and other necessary functions
-
     // TODO Fix side hit boxes
-    // TODO Add button tasks, make jump movement
+    // TODO Add button tasks
+
     // TODO Add random element that generates platforms
     // TODO Get bitmap for platforms and coins.
+
     // TODO Start working on jumping on stationary platforms
+
     // TODO Make platforms fall
     // TODO Make Bucky be able to jump from them
+
     // TODO TODO make screen scrool up, in doodle jump fashion (if possible)
     // TODO keep track of score
     // TODO when you hit the bottom of the screen you die and your score is shown
@@ -95,6 +97,15 @@ int main(void)
              NULL,
              1,
              &Task_Bucky_Handle
+         );
+
+    xTaskCreate
+         (   Task_Platform,
+             "Task_Platform",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             1,
+             &Task_Platform_Handle
          );
 
     xTaskCreate

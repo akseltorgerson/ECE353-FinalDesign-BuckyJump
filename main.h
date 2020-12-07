@@ -28,6 +28,7 @@
 #include <task_button.h>
 #include <task_buzzer.h>
 #include <task_lightsensor.h>
+#include <task_platform.h>
 
 /* Other Includes */
 #include <lcd.h>
