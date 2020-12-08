@@ -44,7 +44,7 @@ void accel_init(void) {
     ADC14->CTL0 |= ADC14_CTL0_ON;
 
     // LEDS for fun
-    ece353_MKII_RGB_IO_Init(false);
+    // ece353_MKII_RGB_IO_Init(false);
 
 }
 

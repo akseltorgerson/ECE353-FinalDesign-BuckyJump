@@ -41,11 +41,13 @@ void Task_Bucky(void *pvParameters) {
     BUCKY_MSG_t bucky_msg;
     BaseType_t status;
 
-    //uint8_t buckyDir = buckyRightSmall_bitmap;
+    int i;
 
     int height = 0;
     bool jump = false;
     bool falling = false;
+    bool standing = true;
+    bool platHit = false;
 
     // draw Bucky initially
     lcd_draw_image(
@@ -85,9 +87,11 @@ void Task_Bucky(void *pvParameters) {
 
             delayMS = bucky_msg.speed;
 
-        } else if (bucky_msg.cmd == BUCKY_JUMP && !jump && !falling) {
+        } else if (bucky_msg.cmd == BUCKY_JUMP && standing) {
 
             jump = true;
+            falling = false;
+            standing = false;
             height = 0;
 
         }
@@ -95,40 +99,69 @@ void Task_Bucky(void *pvParameters) {
         if (jump) {             // if we are jumping
 
             if (height >= 50) {
+
                 jump = false;
                 falling = true;
+                height = 0;
+
             } else {
+
                 height++;
-                buckyY--;
+
+                if (buckyY - 1 >= (buckySmallHeightPixels / 2)) {
+
+                    buckyY--;
+                } else {
+
+                    jump = false;
+                    falling = true;
+                    height = 0;
+
+                }
             }
 
-        } else {                // if were not jumping were falling
+        } else {            // if were not jumping we are standing or falling or both!
 
-            // need to check if we are right above a platform
+            platHit = false;
 
-            // for (int i = 0; i <  )
+            // scan all platforms
+            for (i = 0; i < 2; i++ ) {
 
+                // if we are in the hitbox range for any of the platforms
+                if      ((buckyX + (buckySmallWidthPixels  / 4) >= platforms[i].x - (platformWidthPixels  / 2)) &&
+                        (buckyX - (buckySmallWidthPixels  / 4) <= platforms[i].x + (platformWidthPixels  / 2)) &&
+                        (buckyY + (buckySmallHeightPixels / 2) == platforms[i].y - (platformHeightPixels / 2))) {
 
+                    // we hit a platform
+                    platHit = true;
+                }
+            }
 
-            if  ((buckyX + (buckySmallWidthPixels  / 4) >= platforms[0].x - (platformWidthPixels  / 2)) &&
-                 (buckyX - (buckySmallWidthPixels  / 4) <= platforms[0].x + (platformWidthPixels  / 2)) &&
-                 (buckyY + (buckySmallHeightPixels / 2) == platforms[0].y - (platformHeightPixels / 2))) {
+            // check if we are on the bottom of the screen
+            if (buckyY + 1 >= LCD_HORIZONTAL_MAX - (buckySmallHeightPixels / 2)) {
 
                 falling = false;
+                standing = true;
 
-            // if we are not standing on the bottom of the screen
-            } else if (buckyY + 1 <= LCD_HORIZONTAL_MAX - (buckySmallHeightPixels / 2)) {
+            } else if (falling && platHit) {
+
+                // we hit a platform or the bottom of the screen
+                falling = false;
+                standing = true;
+
+            } else if (standing && !platHit) {
 
                 falling = true;
+                standing = false;
+
+            }
+
+            if (falling) {
+
                 buckyY++;
 
-
-            } else {
-
-                falling = false;
             }
         }
-
 
         status = xSemaphoreTake(Sem_LCD_Draw, portMAX_DELAY);
 

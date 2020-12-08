@@ -37,10 +37,26 @@ void Task_Platform(void *pvParameters) {
     platforms[0].x = LCD_HORIZONTAL_MAX - 30;
     platforms[0].y = LCD_VERTICAL_MAX - 30;
 
+    platforms[1].type = NORMAL;
+    platforms[1].id = 0;
+    platforms[1].x = LCD_HORIZONTAL_MAX - 75;
+    platforms[1].y = LCD_VERTICAL_MAX - 60;
+
     // draw platform initially
     lcd_draw_image(
             platforms[0].x,
             platforms[0].y,
+            platformWidthPixels,
+            platformHeightPixels,
+            platform_bitmap,
+            LCD_COLOR_YELLOW,
+            LCD_COLOR_BLACK
+    );
+
+    // draw platform initially
+    lcd_draw_image(
+            platforms[1].x,
+            platforms[1].y,
             platformWidthPixels,
             platformHeightPixels,
             platform_bitmap,
@@ -58,6 +74,17 @@ void Task_Platform(void *pvParameters) {
         lcd_draw_image(
                 platforms[0].x,
                 platforms[0].y,
+                platformWidthPixels,
+                platformHeightPixels,
+                platform_bitmap,
+                LCD_COLOR_YELLOW,
+                LCD_COLOR_BLACK
+        );
+
+        // draw platform initially
+        lcd_draw_image(
+                platforms[1].x,
+                platforms[1].y,
                 platformWidthPixels,
                 platformHeightPixels,
                 platform_bitmap,
