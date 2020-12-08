@@ -20,7 +20,7 @@ void platform_init(void) {
     Queue_Platform = xQueueCreate(2, sizeof(PLATFORM_t));
 
     // update platform location every 25ms
-    ece353_T32_2_Interrupt_Ms(25);
+    ece353_T32_2_Interrupt_Ms(100);
 
 }
 
@@ -38,9 +38,14 @@ void Task_Platform(void *pvParameters) {
     platforms[0].y = LCD_VERTICAL_MAX - 30;
 
     platforms[1].type = NORMAL;
-    platforms[1].id = 0;
-    platforms[1].x = LCD_HORIZONTAL_MAX - 75;
+    platforms[1].id = 1;
+    platforms[1].x = LCD_HORIZONTAL_MAX - 100;
     platforms[1].y = LCD_VERTICAL_MAX - 60;
+
+    platforms[2].type = NORMAL;
+    platforms[2].id = 2;
+    platforms[2].x = LCD_HORIZONTAL_MAX - 40;
+    platforms[2].y = 30;
 
     // draw platform initially
     lcd_draw_image(
@@ -64,6 +69,17 @@ void Task_Platform(void *pvParameters) {
             LCD_COLOR_BLACK
     );
 
+    // draw platform initially
+    lcd_draw_image(
+            platforms[2].x,
+            platforms[2].y,
+            platformWidthPixels,
+            platformHeightPixels,
+            platform_bitmap,
+            LCD_COLOR_YELLOW,
+            LCD_COLOR_BLACK
+    );
+
     while(1) {
 
         // wait until we get a task notification from the T32_INT2 ISR
@@ -71,9 +87,11 @@ void Task_Platform(void *pvParameters) {
 
         status = xSemaphoreTake(Sem_LCD_Draw, portMAX_DELAY);
 
+        // make the platforms falling.
+
         lcd_draw_image(
                 platforms[0].x,
-                platforms[0].y,
+                platforms[0].y++,
                 platformWidthPixels,
                 platformHeightPixels,
                 platform_bitmap,
@@ -84,7 +102,7 @@ void Task_Platform(void *pvParameters) {
         // draw platform initially
         lcd_draw_image(
                 platforms[1].x,
-                platforms[1].y,
+                platforms[1].y++,
                 platformWidthPixels,
                 platformHeightPixels,
                 platform_bitmap,
@@ -92,10 +110,22 @@ void Task_Platform(void *pvParameters) {
                 LCD_COLOR_BLACK
         );
 
+        // draw platform initially
+        lcd_draw_image(
+                platforms[2].x,
+                platforms[2].y++,
+                platformWidthPixels,
+                platformHeightPixels,
+                platform_bitmap,
+                LCD_COLOR_YELLOW,
+                LCD_COLOR_BLACK
+        );
+
+
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay
-        vTaskDelay(pdMS_TO_TICKS(25));
+        vTaskDelay(pdMS_TO_TICKS(40));
 
     }
 
