@@ -28,9 +28,10 @@ typedef struct {
 } PLATFORM_t ;
 
 extern TaskHandle_t Task_Platform_Handle;
-extern PLATFORM_t platforms[];
-
 extern QueueHandle_t Queue_Platform;
+extern PLATFORM_t platforms[];
+extern uint8_t numPlat;
+
 
 /******************************************************************************
 * * This function will initialize Queue_Platform and other things needed

@@ -10,8 +10,9 @@
 
 TaskHandle_t Task_Platform_Handle;
 QueueHandle_t Queue_Platform;
-
 PLATFORM_t platforms[10];
+extern uint8_t numPlat = 6;
+time_t t;
 
 void platform_init(void) {
 
@@ -20,7 +21,10 @@ void platform_init(void) {
     Queue_Platform = xQueueCreate(2, sizeof(PLATFORM_t));
 
     // update platform location every 25ms
-    ece353_T32_2_Interrupt_Ms(100);
+    ece353_T32_2_Interrupt_Ms(50);
+
+    // init random number generator
+    srand((unsigned) &(t));
 
 }
 
@@ -31,54 +35,19 @@ void Task_Platform(void *pvParameters) {
     //PLATFORM_t platform;
     BaseType_t status;
 
-    // adding 1 test platform for now
-    platforms[0].type = NORMAL;
-    platforms[0].id = 0;
-    platforms[0].x = LCD_HORIZONTAL_MAX - 30;
-    platforms[0].y = LCD_VERTICAL_MAX - 30;
+    uint8_t numCol = 3;
 
-    platforms[1].type = NORMAL;
-    platforms[1].id = 1;
-    platforms[1].x = LCD_HORIZONTAL_MAX - 100;
-    platforms[1].y = LCD_VERTICAL_MAX - 60;
+    int i;
 
-    platforms[2].type = NORMAL;
-    platforms[2].id = 2;
-    platforms[2].x = LCD_HORIZONTAL_MAX - 40;
-    platforms[2].y = 30;
+    // create platforms
+    for (i = 0; i < numPlat; i++) {
 
-    // draw platform initially
-    lcd_draw_image(
-            platforms[0].x,
-            platforms[0].y,
-            platformWidthPixels,
-            platformHeightPixels,
-            platform_bitmap,
-            LCD_COLOR_YELLOW,
-            LCD_COLOR_BLACK
-    );
+        platforms[i].type = NORMAL;
+        platforms[i].id = i;
+        platforms[i].x = ((LCD_HORIZONTAL_MAX - (((i % numCol) + 1) * (LCD_HORIZONTAL_MAX / (numCol + 1)))));
+        platforms[i].y = (LCD_VERTICAL_MAX - ((i  +  1) * (255 / numPlat)));
 
-    // draw platform initially
-    lcd_draw_image(
-            platforms[1].x,
-            platforms[1].y,
-            platformWidthPixels,
-            platformHeightPixels,
-            platform_bitmap,
-            LCD_COLOR_YELLOW,
-            LCD_COLOR_BLACK
-    );
-
-    // draw platform initially
-    lcd_draw_image(
-            platforms[2].x,
-            platforms[2].y,
-            platformWidthPixels,
-            platformHeightPixels,
-            platform_bitmap,
-            LCD_COLOR_YELLOW,
-            LCD_COLOR_BLACK
-    );
+    }
 
     while(1) {
 
@@ -87,45 +56,45 @@ void Task_Platform(void *pvParameters) {
 
         status = xSemaphoreTake(Sem_LCD_Draw, portMAX_DELAY);
 
-        // make the platforms falling.
+        for (i = 0; i < numPlat; i++) {
 
-        lcd_draw_image(
-                platforms[0].x,
-                platforms[0].y++,
-                platformWidthPixels,
-                platformHeightPixels,
-                platform_bitmap,
-                LCD_COLOR_YELLOW,
-                LCD_COLOR_BLACK
-        );
+            // if the platform is about to be off the screen.
+            if ((platforms[i].y + 1) == (LCD_VERTICAL_MAX - (platformHeightPixels / 2))) {
 
-        // draw platform initially
-        lcd_draw_image(
-                platforms[1].x,
-                platforms[1].y++,
-                platformWidthPixels,
-                platformHeightPixels,
-                platform_bitmap,
-                LCD_COLOR_YELLOW,
-                LCD_COLOR_BLACK
-        );
+                // draw a black platform over it
+                lcd_draw_image(
+                        platforms[i].x,
+                        platforms[i].y,
+                        platformWidthPixels,
+                        platformHeightPixels,
+                        platform_bitmap,
+                        LCD_COLOR_BLACK,
+                        LCD_COLOR_BLACK
+                );
 
-        // draw platform initially
-        lcd_draw_image(
-                platforms[2].x,
-                platforms[2].y++,
-                platformWidthPixels,
-                platformHeightPixels,
-                platform_bitmap,
-                LCD_COLOR_YELLOW,
-                LCD_COLOR_BLACK
-        );
+                // set its value just off the bottom of the screen
+                platforms[i].y += platformHeightPixels;
 
+                // give it a random x value
+                platforms[i].x = ((LCD_HORIZONTAL_MAX - (((rand() % numCol) + 1) * (LCD_HORIZONTAL_MAX / (numCol + 1)))));
+
+            }
+
+            lcd_draw_image(
+                    platforms[i].x,
+                    platforms[i].y++,
+                    platformWidthPixels,
+                    platformHeightPixels,
+                    platform_bitmap,
+                    LCD_COLOR_YELLOW,
+                    LCD_COLOR_BLACK
+            );
+        }
 
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay
-        vTaskDelay(pdMS_TO_TICKS(40));
+        vTaskDelay(pdMS_TO_TICKS(10));
 
     }
 

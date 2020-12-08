@@ -125,7 +125,7 @@ void Task_Bucky(void *pvParameters) {
             platHit = false;
 
             // scan all platforms
-            for (i = 0; i < 3; i++ ) {
+            for (i = 0; i < numPlat; i++ ) {
 
                 // if we are in the hitbox range for any of the platforms
                 if      ((buckyX + (buckySmallWidthPixels  / 4) >= platforms[i].x - (platformWidthPixels  / 2)) &&
@@ -219,7 +219,7 @@ void Task_Bucky(void *pvParameters) {
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay, default is 25ms
-        vTaskDelay(pdMS_TO_TICKS(delayMS));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 
 }

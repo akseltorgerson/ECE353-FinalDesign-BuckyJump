@@ -59,7 +59,7 @@ void Task_Accelerometer_Timer(void *pvParameters) {
         ADC14->CTL0 |= ADC14_CTL0_SC | ADC14_CTL0_ENC;
 
         // delay 5ms
-        vTaskDelay(pdMS_TO_TICKS(5));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 
@@ -105,7 +105,7 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
 
         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 

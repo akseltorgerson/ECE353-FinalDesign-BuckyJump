@@ -19,7 +19,7 @@ void button_init() {
     ece353_MKII_S1_Init();
     ece353_MKII_S2_Init();
 
-    ece353_T32_1_Interrupt_Ms(10);
+    ece353_T32_1_Interrupt_Ms(5);
 
 }
 
@@ -42,7 +42,7 @@ void Task_Button_Bottom_Half(void *pvParameters) {
 
         BUTTON2_PRESSED = false;
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 

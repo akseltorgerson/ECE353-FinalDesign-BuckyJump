@@ -13,7 +13,7 @@ TaskHandle_t Task_LightSensor_Handle;
 void Task_LightSensor(void *pvParameters) {
 
     while (1) {
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 
