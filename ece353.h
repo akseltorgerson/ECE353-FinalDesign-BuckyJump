@@ -255,6 +255,16 @@ void ece353_MKII_RGB_PWM(
 void ece353_T32_1_Interrupt_Ms(uint16_t ms);
 
 /*****************************************************
+ * Configures Timer32_2 to generate a periodic interrupt
+ *
+ * Parameters
+ *      ticks  - Number of milliseconds per interrupt
+ * Returns
+ *      None
+ *****************************************************/
+void ece353_T32_2_Interrupt_Ms(uint16_t ms);
+
+/*****************************************************
  * Configures ADC14
  *
  * Parameters

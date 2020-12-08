@@ -8,11 +8,10 @@
 
 #include <main.h>
 
-#define BUCKY_QUEUE_LEN 2
-
 TaskHandle_t Task_Bucky_Handle;
 TaskHandle_t Task_Jump_Handle;
 QueueHandle_t Queue_Bucky;
+SemaphoreHandle_t Sem_LCD_Draw;
 
 /******************************************************************************
  * This function will initialize Queue_Bucky and initialize the LCD
@@ -42,9 +41,11 @@ void Task_Bucky(void *pvParameters) {
     BUCKY_MSG_t bucky_msg;
     BaseType_t status;
 
+    //uint8_t buckyDir = buckyRightSmall_bitmap;
+
     int height = 0;
     bool jump = false;
-    bool up = true;
+    bool falling = false;
 
     // draw Bucky initially
     lcd_draw_image(
@@ -52,7 +53,7 @@ void Task_Bucky(void *pvParameters) {
             buckyY,
             buckySmallWidthPixels,
             buckySmallHeightPixels,
-            buckyRightSmall_bitmap,
+            buckyCenterSmall_bitmap,
             LCD_COLOR_RED,
             LCD_COLOR_BLACK
     );
@@ -64,56 +65,125 @@ void Task_Bucky(void *pvParameters) {
         if (bucky_msg.cmd == BUCKY_LEFT) {
 
             if (buckyX - 1 >= (buckySmallWidthPixels / 2)) {
-            buckyX--;
-            delayMS = bucky_msg.speed;
+
+
+                buckyX--;
+                //buckyDir[] = buckyLeftSmall_bitmap;
+                delayMS = bucky_msg.speed;
             }
 
         } else if (bucky_msg.cmd == BUCKY_RIGHT) {
 
             if (buckyX + 1 <= (LCD_HORIZONTAL_MAX - (buckySmallWidthPixels / 2))) {
-            buckyX++;
-            delayMS = bucky_msg.speed;
+
+                buckyX++;
+                //buckyDir[] = buckyRightSmall_bitmap[];
+                delayMS = bucky_msg.speed;
             }
 
         } else if (bucky_msg.cmd == BUCKY_CENTER) {
 
             delayMS = bucky_msg.speed;
 
-        } else if (bucky_msg.cmd == BUCKY_JUMP && !jump) {
+        } else if (bucky_msg.cmd == BUCKY_JUMP && !jump && !falling) {
 
             jump = true;
+            height = 0;
 
         }
 
-        if (jump) {
-            if (up) {
-                buckyY--;
-                if (height >= 50) {
-                    up = false;
-                } else {
-                    height++;
-                }
+        if (jump) {             // if we are jumping
+
+            if (height >= 50) {
+                jump = false;
+                falling = true;
             } else {
+                height++;
+                buckyY--;
+            }
+
+        } else {                // if were not jumping were falling
+
+            // need to check if we are right above a platform
+
+            // for (int i = 0; i <  )
+
+
+
+            if  ((buckyX + (buckySmallWidthPixels  / 4) >= platforms[0].x - (platformWidthPixels  / 2)) &&
+                 (buckyX - (buckySmallWidthPixels  / 4) <= platforms[0].x + (platformWidthPixels  / 2)) &&
+                 (buckyY + (buckySmallHeightPixels / 2) == platforms[0].y - (platformHeightPixels / 2))) {
+
+                falling = false;
+
+            // if we are not standing on the bottom of the screen
+            } else if (buckyY + 1 <= LCD_HORIZONTAL_MAX - (buckySmallHeightPixels / 2)) {
+
+                falling = true;
                 buckyY++;
-                if (height <= 0 ) {
-                    up = true;
-                    jump = false;
-                    height = 0;
-                } else {
-                    height--;
-                }
+
+
+            } else {
+
+                falling = false;
             }
         }
 
-        lcd_draw_image(
-                buckyX,
-                buckyY,
-                buckySmallWidthPixels,
-                buckySmallHeightPixels,
-                buckyRightSmall_bitmap,
-                LCD_COLOR_RED,
-                LCD_COLOR_BLACK
-        );
+
+        status = xSemaphoreTake(Sem_LCD_Draw, portMAX_DELAY);
+
+
+        if (jump) {
+
+            lcd_draw_image(
+                    buckyX,
+                    buckyY,
+                    buckySmallWidthPixels,
+                    buckySmallHeightPixels,
+                    buckyJumpSmall_bitmap,
+                    LCD_COLOR_RED,
+                    LCD_COLOR_BLACK
+            );
+
+        } else if (bucky_msg.cmd == BUCKY_RIGHT) {
+
+            lcd_draw_image(
+                    buckyX,
+                    buckyY,
+                    buckySmallWidthPixels,
+                    buckySmallHeightPixels,
+                    buckyRightSmall_bitmap,
+                    LCD_COLOR_RED,
+                    LCD_COLOR_BLACK
+            );
+
+        } else if (bucky_msg.cmd == BUCKY_LEFT) {
+
+            lcd_draw_image(
+                    buckyX,
+                    buckyY,
+                    buckySmallWidthPixels,
+                    buckySmallHeightPixels,
+                    buckyLeftSmall_bitmap,
+                    LCD_COLOR_RED,
+                    LCD_COLOR_BLACK
+            );
+
+        } else {
+
+            lcd_draw_image(
+                    buckyX,
+                    buckyY,
+                    buckySmallWidthPixels,
+                    buckySmallHeightPixels,
+                    buckyCenterSmall_bitmap,
+                    LCD_COLOR_RED,
+                    LCD_COLOR_BLACK
+            );
+
+        }
+
+        xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay, default is 25ms
         vTaskDelay(pdMS_TO_TICKS(delayMS));

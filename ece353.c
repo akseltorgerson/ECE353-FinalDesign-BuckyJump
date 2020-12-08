@@ -231,6 +231,8 @@ void ece353_T32_1_wait(uint32_t ticks) {
         }
 }
 
+
+
 //*****************************************************************************
 //*****************************************************************************
 // ICE 03 - Timer32_1 Push Button Detection
@@ -617,10 +619,43 @@ void ece353_T32_1_Interrupt_Ms(uint16_t ms) {
     // Enable the Timer32 interrupt in NVIC
     // __enable_irq();
     NVIC_EnableIRQ(T32_INT1_IRQn);
-    NVIC_SetPriority(T32_INT1_IRQn, 1);
+    NVIC_SetPriority(T32_INT1_IRQn, 2);
 
     // Start Timer32 and enable interrupt
     TIMER32_1->CONTROL =    TIMER32_CONTROL_ENABLE |    // turn timer on
+                            TIMER32_CONTROL_MODE |      // periodic mode
+                            TIMER32_CONTROL_SIZE |      // 32 bit timer
+                            TIMER32_CONTROL_IE;         // enable interrupts
+
+}
+
+/*****************************************************
+ * Configures Timer32_2 to generate a periodic interrupt
+ *
+ * Parameters
+ *      ticks  - Number of milliseconds per interrupt
+ * Returns
+ *      None
+ *****************************************************/
+void ece353_T32_2_Interrupt_Ms(uint16_t ms) {
+
+    // ticks = desired period / core clock period
+    // 20e-3/(1/3e6) = (3e6 * 20)/1000
+    uint32_t ticks = ((SystemCoreClock * ms)/1000) - 1;
+
+    // stop the timer
+    TIMER32_2->CONTROL = 0;
+
+    // Set the load register
+    TIMER32_2->LOAD = ticks;
+
+    // Enable the Timer32 interrupt in NVIC
+    // __enable_irq();
+    NVIC_EnableIRQ(T32_INT2_IRQn);
+    NVIC_SetPriority(T32_INT2_IRQn, 3);
+
+    // Start Timer32 and enable interrupt
+    TIMER32_2->CONTROL =    TIMER32_CONTROL_ENABLE |    // turn timer on
                             TIMER32_CONTROL_MODE |      // periodic mode
                             TIMER32_CONTROL_SIZE |      // 32 bit timer
                             TIMER32_CONTROL_IE;         // enable interrupts

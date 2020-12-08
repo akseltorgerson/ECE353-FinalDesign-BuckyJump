@@ -12,6 +12,7 @@
 #include <main.h>
 
 #define BASE_DELAY  30
+#define BUCKY_QUEUE_LEN 2
 
 typedef enum {
     BUCKY_LEFT,
@@ -28,6 +29,7 @@ typedef struct {
 extern TaskHandle_t Task_Bucky_Handle;
 extern TaskHandle_t Task_Jump_Handle;
 extern QueueHandle_t Queue_Bucky;
+extern SemaphoreHandle_t Sem_LCD_Draw;
 
 /******************************************************************************
  * This function will initialize Queue_Bucky and initialize the LCD
