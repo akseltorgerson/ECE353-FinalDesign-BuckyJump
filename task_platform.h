@@ -43,5 +43,7 @@ void platform_init(void);
  ******************************************************************************/
 void Task_Platform(void *pvParameters);
 
+uint16_t OPT3001_read_light(void);
+
 
 #endif /* TASK_PLATFORM_H_ */

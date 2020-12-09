@@ -29,4 +29,11 @@ extern const uint8_t platform_bitmap[];
 extern const uint8_t platformWidthPixels;
 extern const uint8_t platformHeightPixels;
 
+/* Bitmap info for splash screen */
+extern const uint8_t splashScreen0_Bitmap[];
+extern const uint8_t splashScreen1_Bitmap[];
+
+extern const uint8_t splashScreenWidthPixels;
+extern const uint8_t splashScreenHeightPixels;
+
 #endif /* BITMAPS_H_ */

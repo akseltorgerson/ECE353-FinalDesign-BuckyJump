@@ -28,12 +28,11 @@
 #define OPT3001_CNV_RDY     0x0080 // conversion ready when this bit is set
 
 extern TaskHandle_t Task_LightSensor_Handle;
-extern uint16_t LIGHT_VAL;
 
 void light_init(void);
 
 void Task_LightSensor_Bottom_Half(void *pvParameters);
 
-void OPT3001_read_light(void);
+uint16_t OPT3001_read_light(void);
 
 #endif /* TASK_LIGHTSENSOR_H_ */

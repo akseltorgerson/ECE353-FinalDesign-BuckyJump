@@ -3,8 +3,6 @@
  *
  *  Created on: Sep 25, 2020
  *      Author: Joe Krachey
- *      Author: Aksel Torgerson
- *      Author: Matthew Kesler
  */
 
 #include "i2c.h"
@@ -116,6 +114,8 @@ void i2c_init(void)
                         EUSCI_B_CTLW0_SSEL__SMCLK;      // SMCLK
 
     EUSCI_B1->BRW =     SystemCoreClock/100000;         // baudrate = SMCLK / ? = 100kHz
+
+   // EUSCI_B1->IE |=     EUSCI_B_IE_STPIE;
 
     EUSCI_B1->CTLW0 &=  ~EUSCI_A_CTLW0_SWRST;           // Release eUSCI from reset
 

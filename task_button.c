@@ -78,6 +78,32 @@ void T32_INT1_IRQHandler() {
         }
     }
 
+    if (!BUTTON1_PRESSED) {
+
+        static uint8_t button1_state = 0x00;
+        bool button1_pressed = ece353_MKII_S1();
+
+        button1_state = button1_state << 1;
+
+        if(button1_pressed) {
+
+            button1_state |= 0x01;
+        }
+
+        if(button1_state == 0x7F) { //0111 1111
+
+            BUTTON1_PRESSED = true;
+
+            // send a task notification to Task_Button_Bottom_Half
+            //vTaskNotifyGiveFromISR(
+             //       Task_Splash_Handle,
+             //       &xHigherPriorityTaskWoken
+            //);
+
+            //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
+    }
+
 
 
     // DONT FORGET TO CLEAR THE INTERRUPT

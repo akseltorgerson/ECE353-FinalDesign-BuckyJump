@@ -52,6 +52,7 @@ int main(void)
     accel_init();
     button_init();
     platform_init();
+    light_init();
 
     __enable_irq();
 
@@ -76,7 +77,7 @@ int main(void)
             "Task_Accelerometer",
             configMINIMAL_STACK_SIZE,
             NULL,
-            2,
+            3,
             &Task_Accelerometer_Timer_Handle
         );
 
@@ -85,7 +86,7 @@ int main(void)
              "Task_Accelerometer",
              configMINIMAL_STACK_SIZE,
              NULL,
-             3,
+             4,
              &Task_Accelerometer_Handle
          );
 
@@ -94,7 +95,7 @@ int main(void)
              "Task_Bucky",
              configMINIMAL_STACK_SIZE,
              NULL,
-             1,
+             2,
              &Task_Bucky_Handle
          );
 
@@ -112,7 +113,7 @@ int main(void)
              "Task_Button",
              configMINIMAL_STACK_SIZE,
              NULL,
-             3,
+             4,
              &Task_Button_Handle
          );
 
@@ -121,7 +122,7 @@ int main(void)
              "Task_Buzzer",
              configMINIMAL_STACK_SIZE,
              NULL,
-             1,
+             2,
              &Task_Buzzer_Handle
          );
 
@@ -130,9 +131,18 @@ int main(void)
              "Task_LightSensor",
              configMINIMAL_STACK_SIZE,
              NULL,
-             3,
+             4,
              &Task_LightSensor_Handle
          );
+
+    xTaskCreate
+        (   Task_Splash,
+            "Task_Splash",
+            configMINIMAL_STACK_SIZE,
+            NULL,
+            5,
+            &Task_Splash_Handle
+        );
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();

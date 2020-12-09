@@ -30,12 +30,15 @@
 #include <task_buzzer.h>
 #include <task_lightsensor.h>
 #include <task_platform.h>
+#include <task_splash.h>
 
 /* Other Includes */
 #include <lcd.h>
 #include <bitmaps.h>
 #include <ece353.h>
 #include <time.h>
+#include <math.h>
 #include <i2c.h>
+#include <music.h>
 
 #endif /* MAIN_H_ */

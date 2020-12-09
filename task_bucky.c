@@ -24,6 +24,15 @@ void bucky_init(void) {
     // init the LCD
     Crystalfontz128x128_Init();
 
+    // init the i2c bus
+    i2c_init();
+
+    // Program the config register to power up, covert every 800ms, and be continuous
+    i2c_write_16(I2C_LIGHT_ADDR, I2C_LIGHT_CONFIG, 0xC400);
+
+    // init the buzzer
+    ece353_MKII_Buzzer_Init(0);
+
 }
 
 /******************************************************************************
@@ -41,30 +50,15 @@ void Task_Bucky(void *pvParameters) {
     BUCKY_MSG_t bucky_msg;
     BaseType_t status;
 
-    bool darkMode = false;
-
     int i;
 
     int buckyColor = LCD_COLOR_RED;
-    int platformColor = LCD_COLOR_YELLOW;
-    int darkColor = LCD_COLOR_GRAY;
 
     int height = 0;
     bool jump = false;
     bool falling = false;
     bool standing = true;
     bool platHit = false;
-
-    // draw Bucky initially
-    lcd_draw_image(
-            buckyX,
-            buckyY,
-            buckySmallWidthPixels,
-            buckySmallHeightPixels,
-            buckyCenterSmall_bitmap,
-            LCD_COLOR_RED,
-            LCD_COLOR_BLACK
-    );
 
     while(1) {
 
@@ -73,7 +67,6 @@ void Task_Bucky(void *pvParameters) {
         if (bucky_msg.cmd == BUCKY_LEFT) {
 
             if (buckyX - 1 >= (buckySmallWidthPixels / 2)) {
-
 
                 buckyX--;
                 //buckyDir[] = buckyLeftSmall_bitmap;
@@ -95,17 +88,13 @@ void Task_Bucky(void *pvParameters) {
 
         } else if (bucky_msg.cmd == BUCKY_COLOR) {
 
-            if (darkMode) {
+            if (bucky_msg.speed) {
 
-                buckyColor = LCD_COLOR_RED;
-                platformColor = LCD_COLOR_YELLOW;
-                darkMode = false;
+                buckyColor = LCD_COLOR_GRAY;
 
             } else {
 
-                buckyColor = LCD_COLOR_GRAY;
-                platformColor = LCD_COLOR_GRAY;
-                darkMode = false;
+                buckyColor = LCD_COLOR_RED;
 
             }
 
@@ -115,6 +104,9 @@ void Task_Bucky(void *pvParameters) {
             falling = false;
             standing = false;
             height = 0;
+
+            //music_play_song();
+            // test
 
         }
 
@@ -133,6 +125,7 @@ void Task_Bucky(void *pvParameters) {
                 if (buckyY - 1 >= (buckySmallHeightPixels / 2)) {
 
                     buckyY--;
+
                 } else {
 
                     jump = false;
@@ -171,11 +164,17 @@ void Task_Bucky(void *pvParameters) {
                 falling = false;
                 standing = true;
 
+
             } else if (standing && !platHit) {
 
                 falling = true;
                 standing = false;
 
+            }
+
+            if (platHit) {
+
+                standing = true;
             }
 
             if (falling) {
@@ -186,7 +185,6 @@ void Task_Bucky(void *pvParameters) {
         }
 
         status = xSemaphoreTake(Sem_LCD_Draw, portMAX_DELAY);
-
 
         if (jump) {
 
@@ -241,7 +239,7 @@ void Task_Bucky(void *pvParameters) {
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay, default is 25ms
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 
 }

@@ -21,7 +21,7 @@ void platform_init(void) {
     Queue_Platform = xQueueCreate(2, sizeof(PLATFORM_t));
 
     // update platform location every 50ms
-    ece353_T32_2_Interrupt_Ms(50);
+    ece353_T32_2_Interrupt_Ms(25);
 
     // init random number generator
     srand((unsigned) &(t));
