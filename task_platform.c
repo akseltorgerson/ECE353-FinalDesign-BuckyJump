@@ -11,7 +11,7 @@
 TaskHandle_t Task_Platform_Handle;
 QueueHandle_t Queue_Platform;
 PLATFORM_t platforms[10];
-extern uint8_t numPlat = 6;
+uint8_t numPlat = 6;
 time_t t;
 
 void platform_init(void) {
@@ -20,7 +20,7 @@ void platform_init(void) {
     // not used right now, just here for testing
     Queue_Platform = xQueueCreate(2, sizeof(PLATFORM_t));
 
-    // update platform location every 25ms
+    // update platform location every 50ms
     ece353_T32_2_Interrupt_Ms(50);
 
     // init random number generator
@@ -103,14 +103,35 @@ void Task_Platform(void *pvParameters) {
 
 void T32_INT2_IRQHandler() {
 
-    BaseType_t xHigherPriorityTaskWoken = pdTRUE;
+    static uint8_t read_light = 0x00;
+    read_light = read_light << 1;
+    read_light |= 0x01;
 
-    vTaskNotifyGiveFromISR(
-            Task_Platform_Handle,
-            &xHigherPriorityTaskWoken
-    );
+    if (read_light == 0xFF) {
 
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        BaseType_t xHigherPriorityTaskWoken = pdTRUE;
+
+        vTaskNotifyGiveFromISR(
+                Task_LightSensor_Handle,
+                &xHigherPriorityTaskWoken
+        );
+
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+        read_light = 0x00;
+
+    } else {
+
+        BaseType_t xHigherPriorityTaskWoken = pdTRUE;
+
+        vTaskNotifyGiveFromISR(
+                Task_Platform_Handle,
+                &xHigherPriorityTaskWoken
+        );
+
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+    }
 
     // DONT FORGET TO CLEAR THE INTERRUPT
     TIMER32_2->INTCLR = BIT0;

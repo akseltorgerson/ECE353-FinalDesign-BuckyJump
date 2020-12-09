@@ -41,7 +41,13 @@ void Task_Bucky(void *pvParameters) {
     BUCKY_MSG_t bucky_msg;
     BaseType_t status;
 
+    bool darkMode = false;
+
     int i;
+
+    int buckyColor = LCD_COLOR_RED;
+    int platformColor = LCD_COLOR_YELLOW;
+    int darkColor = LCD_COLOR_GRAY;
 
     int height = 0;
     bool jump = false;
@@ -86,6 +92,22 @@ void Task_Bucky(void *pvParameters) {
         } else if (bucky_msg.cmd == BUCKY_CENTER) {
 
             delayMS = bucky_msg.speed;
+
+        } else if (bucky_msg.cmd == BUCKY_COLOR) {
+
+            if (darkMode) {
+
+                buckyColor = LCD_COLOR_RED;
+                platformColor = LCD_COLOR_YELLOW;
+                darkMode = false;
+
+            } else {
+
+                buckyColor = LCD_COLOR_GRAY;
+                platformColor = LCD_COLOR_GRAY;
+                darkMode = false;
+
+            }
 
         } else if (bucky_msg.cmd == BUCKY_JUMP && standing) {
 
@@ -174,7 +196,7 @@ void Task_Bucky(void *pvParameters) {
                     buckySmallWidthPixels,
                     buckySmallHeightPixels,
                     buckyJumpSmall_bitmap,
-                    LCD_COLOR_RED,
+                    buckyColor,
                     LCD_COLOR_BLACK
             );
 
@@ -186,7 +208,7 @@ void Task_Bucky(void *pvParameters) {
                     buckySmallWidthPixels,
                     buckySmallHeightPixels,
                     buckyRightSmall_bitmap,
-                    LCD_COLOR_RED,
+                    buckyColor,
                     LCD_COLOR_BLACK
             );
 
@@ -198,7 +220,7 @@ void Task_Bucky(void *pvParameters) {
                     buckySmallWidthPixels,
                     buckySmallHeightPixels,
                     buckyLeftSmall_bitmap,
-                    LCD_COLOR_RED,
+                    buckyColor,
                     LCD_COLOR_BLACK
             );
 
@@ -210,7 +232,7 @@ void Task_Bucky(void *pvParameters) {
                     buckySmallWidthPixels,
                     buckySmallHeightPixels,
                     buckyCenterSmall_bitmap,
-                    LCD_COLOR_RED,
+                    buckyColor,
                     LCD_COLOR_BLACK
             );
 
@@ -219,7 +241,7 @@ void Task_Bucky(void *pvParameters) {
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay, default is 25ms
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
 }

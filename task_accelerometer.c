@@ -43,9 +43,6 @@ void accel_init(void) {
     // Turn ADC on
     ADC14->CTL0 |= ADC14_CTL0_ON;
 
-    // LEDS for fun
-    // ece353_MKII_RGB_IO_Init(false);
-
 }
 
 /******************************************************************************
@@ -59,7 +56,7 @@ void Task_Accelerometer_Timer(void *pvParameters) {
         ADC14->CTL0 |= ADC14_CTL0_SC | ADC14_CTL0_ENC;
 
         // delay 5ms
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 
@@ -105,7 +102,7 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
 
         }
 
-        vTaskDelay(pdMS_TO_TICKS(5));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 

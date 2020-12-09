@@ -57,18 +57,12 @@ int main(void)
 
     /* Task initialization */
 
-    // TODO Fix side hit boxes
     // TODO Add button tasks
 
-    // TODO Add random element that generates platforms
     // TODO Get bitmap for platforms and coins.
 
-    // TODO Start working on jumping on stationary platforms
+    // TODO Start working on jumping on stationary platform
 
-    // TODO Make platforms fall
-    // TODO Make Bucky be able to jump from them
-
-    // TODO TODO make screen scrool up, in doodle jump fashion (if possible)
     // TODO keep track of score
     // TODO when you hit the bottom of the screen you die and your score is shown
 
@@ -132,11 +126,11 @@ int main(void)
          );
 
     xTaskCreate
-         (   Task_LightSensor,
+         (   Task_LightSensor_Bottom_Half,
              "Task_LightSensor",
              configMINIMAL_STACK_SIZE,
              NULL,
-             1,
+             3,
              &Task_LightSensor_Handle
          );
 

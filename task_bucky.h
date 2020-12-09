@@ -12,13 +12,14 @@
 #include <main.h>
 
 #define BASE_DELAY  30
-#define BUCKY_QUEUE_LEN 2
+#define BUCKY_QUEUE_LEN 3
 
 typedef enum {
     BUCKY_LEFT,
     BUCKY_RIGHT,
     BUCKY_CENTER,
     BUCKY_JUMP,
+    BUCKY_COLOR
 } BUCKY_CMD_t;
 
 typedef struct {

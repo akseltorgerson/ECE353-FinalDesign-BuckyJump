@@ -36,6 +36,6 @@
 #include <bitmaps.h>
 #include <ece353.h>
 #include <time.h>
-
+#include <i2c.h>
 
 #endif /* MAIN_H_ */

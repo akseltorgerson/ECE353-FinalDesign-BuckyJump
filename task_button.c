@@ -42,7 +42,7 @@ void Task_Button_Bottom_Half(void *pvParameters) {
 
         BUTTON2_PRESSED = false;
 
-        vTaskDelay(pdMS_TO_TICKS(5));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -77,6 +77,8 @@ void T32_INT1_IRQHandler() {
 
         }
     }
+
+
 
     // DONT FORGET TO CLEAR THE INTERRUPT
     TIMER32_1->INTCLR = BIT0;
