@@ -43,8 +43,8 @@
 /*
  *  ======== main ========
  */
-int main(void)
-{
+int main(void) {
+
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
 
     /* Initialization before scheduler */
@@ -53,17 +53,17 @@ int main(void)
     button_init();
     platform_init();
     light_init();
+    buzzer_init();
 
     __enable_irq();
 
     /* LCD semaphore */
-
     Sem_LCD_Draw = xSemaphoreCreateBinary();
 
-    // release draw semaphore
+    /* release LCD semaphore */
     xSemaphoreGive(Sem_LCD_Draw);
 
-    /* Task Init */
+    /* Task Initialization */
     xTaskCreate
         (   Task_Accelerometer_Timer,
             "Task_Accelerometer",

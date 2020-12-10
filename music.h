@@ -65,9 +65,6 @@ typedef struct{
     bool delay;
 }Note_t;
 
-// var to keep track if the music is playing
-volatile extern bool MUSIC_PLAYING;
-
 //***************************************************************
 // Unused
 //***************************************************************

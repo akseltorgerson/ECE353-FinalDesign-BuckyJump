@@ -3,6 +3,8 @@
  *
  *  Created on: Sep 25, 2020
  *      Author: Joe Krachey
+ *      Author: Aksel Torgerson
+ *      Author: Matthew Kesler
  */
 
 #include "i2c.h"
@@ -90,7 +92,7 @@ static __inline void i2c_wait_busy(void)
 }
 
 /**********************************************************************************************
- *
+ * clear the interrupt flag register
  **********************************************************************************************/
 static __inline void i2c_clear_interrupts(void)
 {
@@ -98,7 +100,7 @@ static __inline void i2c_clear_interrupts(void)
 }
 
 /**********************************************************************************************
- *
+ * Initializes the EUSCI_B1 interface as an I2C bus
  **********************************************************************************************/
 void i2c_init(void)
 {
@@ -115,8 +117,6 @@ void i2c_init(void)
 
     EUSCI_B1->BRW =     SystemCoreClock/100000;         // baudrate = SMCLK / ? = 100kHz
 
-   // EUSCI_B1->IE |=     EUSCI_B_IE_STPIE;
-
     EUSCI_B1->CTLW0 &=  ~EUSCI_A_CTLW0_SWRST;           // Release eUSCI from reset
 
 }
@@ -124,7 +124,7 @@ void i2c_init(void)
 
 
 /**********************************************************************************************
- *
+ *  Write 2 bytes of data to the I2C device specified by slave_address
  **********************************************************************************************/
 void i2c_write_16(uint8_t slave_address, uint8_t dev_address, uint16_t data)
 {
@@ -173,7 +173,7 @@ void i2c_write_16(uint8_t slave_address, uint8_t dev_address, uint16_t data)
 }
 
 /**********************************************************************************************
- *
+ *  Read 2 bytes of data from the I2C device.
  **********************************************************************************************/
 uint16_t i2c_read_16(uint8_t slave_address, uint8_t dev_address)
 {

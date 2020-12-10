@@ -7,9 +7,6 @@
 
 #include "music.h"
 
-// keep a global var to see if the song is playing
-volatile extern bool MUSIC_PLAYING = false;
-
 Note_t jumpSound[] =
 {
      {NOTE_C6,ONE_QUARTER,true},  // Tone, Time, Delay
@@ -125,18 +122,12 @@ void music_play_song(void) {
 
     int i = 0;
 
-    // the song has started playing
-    MUSIC_PLAYING = true;
-
     // loop through and play every note in the song
     for (i = 0; i < SONG_NUM_NOTES + 1; i++) {
         music_play_note(i);
     }
 
-    // the song has ended
-    MUSIC_PLAYING = false;
-
-    // reinit the timer interrupt
+    // reinitialize the timer32_1 interrupt
     ece353_T32_1_Interrupt_Ms(10);
 
 }

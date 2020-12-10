@@ -23,8 +23,6 @@
 #define VOLT_1P8    8936        // 1.8
 #define VOLT_1P85   9184        // 1.85
 
-#define BUCKY_SPEED_DAMPENING   .015
-
 extern TaskHandle_t Task_Accelerometer_Handle;
 extern TaskHandle_t Task_Accelerometer_Timer_Handle;
 

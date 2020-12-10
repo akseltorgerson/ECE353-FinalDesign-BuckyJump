@@ -11,6 +11,7 @@
 TaskHandle_t Task_Accelerometer_Handle;
 TaskHandle_t Task_Accelerometer_Timer_Handle;
 
+/* Variable to hold the raw X value returned from the accelerometer */
 volatile uint32_t ACCELEROMETER_X_DIR = 0;
 
 /******************************************************************************
@@ -74,27 +75,21 @@ void Task_Accelerometer_Bottom_Half(void *pvParameters) {
         // wait until we get a task notification from the ADC14 ISR
         ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
+        if (ACCELEROMETER_X_DIR > VOLT_1P7) {                                   /* RIGHT TILT */
 
-        if (ACCELEROMETER_X_DIR > VOLT_1P7) {        /* RIGHT TILT */
-
-            // ece353_MKII_RGB_LED(true, false, false);        // red
-
+            /* Send a command to wake Task_Bucky */
             bucky_msg.cmd = BUCKY_RIGHT;
             bucky_msg.speed = 1;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-        } else if (ACCELEROMETER_X_DIR < VOLT_1P6) {  /* LEFT TILT */
-
-            // ece353_MKII_RGB_LED(false, false, true);        // green
+        } else if (ACCELEROMETER_X_DIR < VOLT_1P6) {                            /* LEFT TILT */
 
             bucky_msg.cmd = BUCKY_LEFT;
             bucky_msg.speed = 1;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
 
-        } else {                                            /* CENTER */
-
-            // ece353_MKII_RGB_LED(false, true, false);        // blue
+    } else {                                                                    /* CENTER */
 
             bucky_msg.cmd = BUCKY_CENTER;
             bucky_msg.speed = 1;

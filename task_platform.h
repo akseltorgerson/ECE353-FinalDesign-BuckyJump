@@ -10,14 +10,12 @@
 
 #include <main.h>
 
-#define BASE_PLATFORM_DELAY 25;
 #define PLATFORM_QUEUE_LEN  2;
 
 typedef enum {
     NORMAL,
-    BONUS,
+    BONUS,  /* Other platform types are not yet implemented */
     FAKE,
-    // other types of platforms
 } PLATFORM_TYPE_t;
 
 typedef struct {
@@ -28,22 +26,20 @@ typedef struct {
 } PLATFORM_t ;
 
 extern TaskHandle_t Task_Platform_Handle;
-extern QueueHandle_t Queue_Platform;
+
+/* Variables to store platform information */
 extern PLATFORM_t platforms[];
 extern uint8_t numPlat;
-
+extern uint8_t numCol;
 
 /******************************************************************************
-* * This function will initialize Queue_Platform and other things needed
+* * This function will initialize T32_2 and the random number generator
 ******************************************************************************/
 void platform_init(void);
 
 /******************************************************************************
- * This task manages the movement of the platforms.
+ * This task manages the movement and generation of platforms
  ******************************************************************************/
 void Task_Platform(void *pvParameters);
-
-uint16_t OPT3001_read_light(void);
-
 
 #endif /* TASK_PLATFORM_H_ */

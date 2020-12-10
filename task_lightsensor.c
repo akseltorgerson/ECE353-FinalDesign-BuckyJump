@@ -10,19 +10,23 @@
 
 TaskHandle_t Task_LightSensor_Handle;
 
+/******************************************************************************
+* This function initializes the functionality of the I2C bus
+******************************************************************************/
 void light_init(void) {
 
-    // init i2c bus
+    /* Initialize the I2C bus */
     i2c_init();
 
-    // init light sensor
+    /* Initialize the light sensor to perform how we want it to */
     i2c_write_16(I2C_LIGHT_ADDR, I2C_LIGHT_CONFIG, OPT3001_RST | OPT3001_CVN800MS | OPT3001_MD_CONT);
-
-    // Program the config register to power up, covert every 800ms, and be continuous
-    // i2c_write_16(I2C_LIGHT_ADDR, I2C_LIGHT_CONFIG, 0xC410);
 
 }
 
+/******************************************************************************
+* Examines the raw data read from the light sensor and sends a message to
+* Task_Bucky accordingly
+******************************************************************************/
 void Task_LightSensor_Bottom_Half(void *pvParameters) {
 
     BaseType_t ulEventToProcess;
@@ -33,40 +37,48 @@ void Task_LightSensor_Bottom_Half(void *pvParameters) {
 
     while (1) {
 
+        /* Wait until we receive a task notification from T32_INT2_IRQHandler */
         ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
+        /* Read the raw data */
         light_val = OPT3001_read_light();
 
-        // convert to lux
+        /* Convert to a sensible LUX value */
         lux = (.01 * pow(2, (light_val & 0xF000)) * (light_val & 0x0FFF));
 
+        /* If the lux is above 100 */
         if (lux < 100) {
 
-            // send dark mode
+            /* Send dark mode command */
             bucky_msg.cmd = BUCKY_COLOR;
             bucky_msg.speed = 1;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
         } else {
 
-            // light mode
+            /* Send light mode command */
             bucky_msg.cmd = BUCKY_COLOR;
             bucky_msg.speed = 0;
             status = xQueueSendToBack(Queue_Bucky, &bucky_msg, portMAX_DELAY);
 
-            }
-
-        vTaskDelay(pdMS_TO_TICKS(10));
         }
 
+        vTaskDelay(pdMS_TO_TICKS(10));
+
+    }
 }
 
+/******************************************************************************
+* Reads and returns the raw data from the light sensor
+******************************************************************************/
 uint16_t OPT3001_read_light(void) {
 
     uint16_t light_val = 0;
-    // read from the register, if the conversion is ready then return a value
+
+    /* Read the value in the result register in the light sensor */
     light_val = i2c_read_16(I2C_LIGHT_ADDR, I2C_LIGHT_RESULT);
 
+    /* Return it for conversion */
     return light_val;
 
 }

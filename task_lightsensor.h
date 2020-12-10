@@ -21,18 +21,28 @@
 
 /* Configuration registers */
 #define OPT3001_RST         0xC810 /* not a mask */
-#define OPT3001_FLG_LOW     0x0020 // low flag
-#define OPT3001_FLG_HIGH    0x0040 // high flag
-#define OPT3001_CVN800MS    0x0800 // convert every 800ms
-#define OPT3001_MD_CONT     0x0600 // we want continuous mode
-#define OPT3001_CNV_RDY     0x0080 // conversion ready when this bit is set
+#define OPT3001_FLG_LOW     0x0020 /* low flag */
+#define OPT3001_FLG_HIGH    0x0040 /* high flag */
+#define OPT3001_CVN800MS    0x0800 /* convert every 800ms */
+#define OPT3001_MD_CONT     0x0600 /* we want continuous mode */
+#define OPT3001_CNV_RDY     0x0080 /* conversion ready when this bit is set */
 
 extern TaskHandle_t Task_LightSensor_Handle;
 
+/******************************************************************************
+* This function initializes the functionality of the I2C bus
+******************************************************************************/
 void light_init(void);
 
+/******************************************************************************
+* Examines the raw data read from the light sensor and sends a message to
+* Task_Bucky accordingly
+******************************************************************************/
 void Task_LightSensor_Bottom_Half(void *pvParameters);
 
+/******************************************************************************
+* Reads and returns the raw data from the light sensor
+******************************************************************************/
 uint16_t OPT3001_read_light(void);
 
 #endif /* TASK_LIGHTSENSOR_H_ */

@@ -13,6 +13,9 @@
 
 extern TaskHandle_t Task_Splash_Handle;
 
+/******************************************************************************
+ * This task manages the start game splash screen
+ ******************************************************************************/
 void Task_Splash(void *pvParameters);
 
 #endif /* TASK_SPLASH_H_ */

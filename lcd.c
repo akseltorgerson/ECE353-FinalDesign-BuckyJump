@@ -20,7 +20,6 @@ uint16_t Lcd_ScreenWidth, Lcd_ScreenHeigth;
  ******************************************************************************/
 void HAL_LCD_PortInit(void) {
 
-    // because they are primary function they are being controlled by our spi interface
     // LCD_SCK
     LCD_SCK_PORT->SEL0 |= LCD_SCK_PIN;
     LCD_SCK_PORT->SEL1 &= ~LCD_SCK_PIN;
@@ -57,11 +56,6 @@ void HAL_LCD_SpiInit(void) {
                         //EUSCI_B_CTLW0_STEM          |   // UCxSTE digital output // dont actually need to use this bit
                         EUSCI_B_CTLW0_SWRST;            // remain eUSCI state machine in reset
 
-    // ADD CODE to set the SPI Clock to 12MHz.
-    //
-    // Divide clock speed by 2 (24MHz/2) = 12 MHz
-    //fBitClock = fBRCLK/(UCBRx+1).
-    //fBitClock = ourclock(BRW register + 1) to get the clock we want
     EUSCI_B0->BRW = 1;
 
     EUSCI_B0->CTLW0 &= ~EUSCI_B_CTLW0_SWRST;// Initialize USCI state machine

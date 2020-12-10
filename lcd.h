@@ -5,6 +5,7 @@
  *      Author: Aksel Torgerson
  *      Author: Matthew Kesler
  */
+
 #include "msp.h"
 
 #ifndef LCD_H_

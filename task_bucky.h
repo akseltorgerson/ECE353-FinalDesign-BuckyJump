@@ -39,7 +39,8 @@ void bucky_init(void);
 
 /******************************************************************************
  * This task manages the movement of Bucky. The accelerometer moves Bucky left
- * or right, and the button S2 makes Bucky jump.
+ * or right, and the button S2 makes Bucky jump. This task is also responsible
+ * for general game flow.
  ******************************************************************************/
 void Task_Bucky(void *pvParameters);
 
