@@ -50,7 +50,7 @@
 #define MEASURE_DURATION 12000000    // 500 milliseconds
 #define MEASURE_RATIO           2    // 2/4 time
 #define DELAY_AMOUNT       240000    // 10  milliseconds
-#define SONG_NUM_NOTES 1
+#define SONG_NUM_NOTES 13
 
 typedef enum measure_time_t {
     ONE_QUARTER,

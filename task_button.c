@@ -19,7 +19,7 @@ void button_init() {
     ece353_MKII_S1_Init();
     ece353_MKII_S2_Init();
 
-    ece353_T32_1_Interrupt_Ms(5);
+    ece353_T32_1_Interrupt_Ms(10);
 
 }
 
@@ -78,6 +78,7 @@ void T32_INT1_IRQHandler() {
         }
     }
 
+
     if (!BUTTON1_PRESSED) {
 
         static uint8_t button1_state = 0x00;
@@ -92,19 +93,11 @@ void T32_INT1_IRQHandler() {
 
         if(button1_state == 0x7F) { //0111 1111
 
+
             BUTTON1_PRESSED = true;
 
-            // send a task notification to Task_Button_Bottom_Half
-            //vTaskNotifyGiveFromISR(
-             //       Task_Splash_Handle,
-             //       &xHigherPriorityTaskWoken
-            //);
-
-            //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         }
     }
-
-
 
     // DONT FORGET TO CLEAR THE INTERRUPT
     TIMER32_1->INTCLR = BIT0;

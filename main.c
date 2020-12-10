@@ -56,22 +56,14 @@ int main(void)
 
     __enable_irq();
 
-    /* Task initialization */
-
-    // TODO Add button tasks
-
-    // TODO Get bitmap for platforms and coins.
-
-    // TODO Start working on jumping on stationary platform
-
-    // TODO keep track of score
-    // TODO when you hit the bottom of the screen you die and your score is shown
+    /* LCD semaphore */
 
     Sem_LCD_Draw = xSemaphoreCreateBinary();
 
     // release draw semaphore
     xSemaphoreGive(Sem_LCD_Draw);
 
+    /* Task Init */
     xTaskCreate
         (   Task_Accelerometer_Timer,
             "Task_Accelerometer",
@@ -122,7 +114,7 @@ int main(void)
              "Task_Buzzer",
              configMINIMAL_STACK_SIZE,
              NULL,
-             2,
+             5,
              &Task_Buzzer_Handle
          );
 

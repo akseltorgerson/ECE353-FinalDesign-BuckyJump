@@ -11,7 +11,7 @@
 
 #include <main.h>
 
-#define BASE_DELAY  30
+#define BASE_DELAY  1
 #define BUCKY_QUEUE_LEN 3
 
 typedef enum {

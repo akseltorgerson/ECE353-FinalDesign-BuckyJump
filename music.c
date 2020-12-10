@@ -12,7 +12,19 @@ volatile extern bool MUSIC_PLAYING = false;
 
 Note_t jumpSound[] =
 {
-    {NOTE_C6,ONE_EIGTH,false},  // Tone, Time, Delay,
+     {NOTE_C6,ONE_QUARTER,true},  // Tone, Time, Delay
+     {NOTE_B5,ONE_QUARTER,true},
+     {NOTE_D6,ONE_QUARTER,true},
+     {NOTE_C6,ONE_QUARTER,true},
+     {NOTE_F6,ONE_QUARTER,true},
+     {NOTE_E6,ONE_QUARTER,true},
+     {NOTE_G6,ONE_QUARTER,true},
+     {NOTE_F6,ONE_QUARTER,true},
+     {NOTE_A6,ONE_QUARTER,true},
+     {NOTE_A6,ONE_QUARTER,true},
+     {NOTE_A6,ONE_QUARTER,true},
+     {NOTE_A6,ONE_QUARTER,true},
+     {NOTE_A6,ONE_HALF,false},
 };
 
 
@@ -123,6 +135,9 @@ void music_play_song(void) {
 
     // the song has ended
     MUSIC_PLAYING = false;
+
+    // reinit the timer interrupt
+    ece353_T32_1_Interrupt_Ms(10);
 
 }
 

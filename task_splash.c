@@ -73,9 +73,6 @@ void Task_Splash(void *pvParameters) {
                     LCD_COLOR_BLACK
             );
 
-        // wait until we get a task notification from the T32_INT1 ISR
-        //ulEventToProcess = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-
             vTaskResume(Task_Accelerometer_Handle);
             vTaskResume(Task_Bucky_Handle);
             vTaskResume(Task_Platform_Handle);

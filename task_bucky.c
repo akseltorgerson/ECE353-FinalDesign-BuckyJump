@@ -59,6 +59,7 @@ void Task_Bucky(void *pvParameters) {
     bool falling = false;
     bool standing = true;
     bool platHit = false;
+    bool gameStart = false;
 
     while(1) {
 
@@ -69,7 +70,6 @@ void Task_Bucky(void *pvParameters) {
             if (buckyX - 1 >= (buckySmallWidthPixels / 2)) {
 
                 buckyX--;
-                //buckyDir[] = buckyLeftSmall_bitmap;
                 delayMS = bucky_msg.speed;
             }
 
@@ -78,7 +78,6 @@ void Task_Bucky(void *pvParameters) {
             if (buckyX + 1 <= (LCD_HORIZONTAL_MAX - (buckySmallWidthPixels / 2))) {
 
                 buckyX++;
-                //buckyDir[] = buckyRightSmall_bitmap[];
                 delayMS = bucky_msg.speed;
             }
 
@@ -104,9 +103,7 @@ void Task_Bucky(void *pvParameters) {
             falling = false;
             standing = false;
             height = 0;
-
-            //music_play_song();
-            // test
+            gameStart = true;
 
         }
 
@@ -157,6 +154,18 @@ void Task_Bucky(void *pvParameters) {
 
                 falling = false;
                 standing = true;
+
+                if (gameStart) {
+
+                    height = 0;
+                    jump = false;
+                    falling = false;
+                    standing = true;
+                    platHit = false;
+                    gameStart = false;
+                    vTaskResume(Task_Buzzer_Handle);
+
+                }
 
             } else if (falling && platHit) {
 
@@ -239,7 +248,7 @@ void Task_Bucky(void *pvParameters) {
         xSemaphoreGive(Sem_LCD_Draw);
 
         // necessary task delay, default is 25ms
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(delayMS));
     }
 
 }
